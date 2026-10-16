@@ -1,0 +1,45 @@
+# XcodeGen tanımı. Kurulum: `brew install xcodegen && xcodegen generate` → SesNot.xcodeproj
+name: SesNot
+options:
+  bundleIdPrefix: com.azhulabs
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+  developmentLanguage: tr
+
+targets:
+  SesNot:
+    type: application
+    platform: iOS
+    sources: [PhoneApp, Shared]
+    dependencies:
+      - target: SesNotWatch
+    info:
+      path: PhoneApp/Info.plist
+      properties:
+        CFBundleDisplayName: SesNot
+        NSSpeechRecognitionUsageDescription: Saatten gelen kayıtları cihaz üzerinde metne çevirmek için.
+        NSMicrophoneUsageDescription: Kayıtları dinlemek ve test kaydı almak için.
+        UILaunchScreen: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.azhulabs.sesnot
+        # Konuşmacı ayrımı: sherpa-onnx.xcframework + SherpaOnnx.swift eklendikten sonra bu satırın
+        # yorumunu kaldırın. Bayrak yokken SpeakerDiarizer.isAvailable false döner.
+        # SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) SESNOT_DIARIZATION
+
+  SesNotWatch:
+    type: application.watchapp2
+    platform: watchOS
+    sources: [WatchApp, Shared]
+    info:
+      path: WatchApp/Info.plist
+      properties:
+        CFBundleDisplayName: SesNot
+        WKCompanionAppBundleIdentifier: com.azhulabs.sesnot
+        WKRunsIndependentlyOfCompanionApp: true
+        NSMicrophoneUsageDescription: Sesli not ve toplantı kaydı almak için.
+        WKBackgroundModes: [self-care]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.azhulabs.sesnot.watchkitapp

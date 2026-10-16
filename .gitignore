@@ -1,0 +1,19 @@
+# macOS / Xcode
+.DS_Store
+ios/SesNot.xcodeproj/
+ios/*.xcworkspace/
+ios/DerivedData/
+ios/build/
+ios/PhoneApp/Diarization/*.onnx
+ios/Frameworks/*.xcframework
+
+# Android
+android/.gradle/
+android/build/
+android/*/build/
+android/local.properties
+android/.idea/
+android/*.iml
+android/mobile/src/main/assets/diarization/*.onnx
+*.keystore
+*.jks
