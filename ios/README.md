@@ -51,6 +51,8 @@ varsayılan açık; diğer şablonlarda not detayından "Konuşmacıları ayır"
 | `PhoneApp/Summarizer.swift` | Foundation Models → yedek özetleyici |
 | `PhoneApp/ProcessingPipeline.swift` | Durum makinesi, yarım kalanları sürdürme |
 | `PhoneApp/NotesListView.swift`, `NoteDetailView.swift` | Arayüz, paylaşım, alışveriş onay kutuları |
+| `PhoneApp/PhoneRecorder.swift`, `RecordView.swift` | Telefondan kayıt; Bluetooth HFP saat mikrofonu |
+| `PhoneApp/RecordingIntents.swift` | Siri / Kısayollar: kaydı başlat, durdur |
 
 ## Henüz yapılmayanlar
 

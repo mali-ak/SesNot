@@ -19,7 +19,8 @@ targets:
       properties:
         CFBundleDisplayName: SesNot
         NSSpeechRecognitionUsageDescription: Saatten gelen kayıtları cihaz üzerinde metne çevirmek için.
-        NSMicrophoneUsageDescription: Kayıtları dinlemek ve test kaydı almak için.
+        NSMicrophoneUsageDescription: Telefondan veya Bluetooth saat mikrofonundan kayıt almak için.
+        UIBackgroundModes: [audio]
         UILaunchScreen: {}
     settings:
       base:

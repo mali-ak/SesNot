@@ -17,11 +17,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,7 +61,8 @@ class MainActivity : ComponentActivity() {
                 val nav = rememberNavController()
                 LaunchedEffect(Unit) { app.pipeline.resumeUnfinished() }
                 NavHost(nav, startDestination = "list") {
-                    composable("list") { NotesList(app.repository) { nav.navigate("note/$it") } }
+                    composable("list") { NotesList(app.repository, onOpen = { nav.navigate("note/$it") }, onRecord = { nav.navigate("record") }) }
+                    composable("record") { RecordScreen { nav.popBackStack() } }
                     composable("note/{id}") { entry ->
                         NoteDetail(app, entry.arguments?.getString("id") ?: "") { nav.popBackStack() }
                     }
@@ -71,13 +74,18 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesList(repo: NoteRepository, onOpen: (String) -> Unit) {
+fun NotesList(repo: NoteRepository, onOpen: (String) -> Unit, onRecord: () -> Unit) {
     val notes by repo.notes.collectAsStateWithLifecycle()
-    Scaffold(topBar = { TopAppBar(title = { Text("SesNot") }) }) { pad ->
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("SesNot") }) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onRecord) { Icon(Icons.Default.Mic, "Telefondan kaydet") }
+        },
+    ) { pad ->
         if (notes.isEmpty()) {
             Column(Modifier.fillMaxSize().padding(pad).padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Henüz not yok", style = MaterialTheme.typography.titleMedium)
-                Text("Saatinizden bir kayıt başlatın; bittiğinde burada görünür.",
+                Text("Saatinizden kayıt başlatın ya da sağ alttaki mikrofonla telefondan kaydedin.",
                     style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         } else LazyColumn(Modifier.padding(pad)) {

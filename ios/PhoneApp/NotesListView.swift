@@ -3,6 +3,8 @@ import SwiftUI
 struct NotesListView: View {
     @EnvironmentObject var store: NoteStore
     @EnvironmentObject var pipeline: ProcessingPipeline
+    @EnvironmentObject var recorder: PhoneRecorder
+    @EnvironmentObject var bridge: RecorderBridge
     @State private var search = ""
     @State private var filter: NoteTemplate?
 
@@ -20,7 +22,7 @@ struct NotesListView: View {
                 if store.notes.isEmpty {
                     ContentUnavailableView("Henüz not yok",
                                            systemImage: "applewatch.radiowaves.left.and.right",
-                                           description: Text("Saatinizden bir kayıt başlatın; bittiğinde burada görünür."))
+                                           description: Text("Saatinizden kayıt başlatın ya da sağ üstteki mikrofonla telefondan kaydedin."))
                 } else {
                     List {
                         ForEach(filtered) { note in
@@ -34,12 +36,25 @@ struct NotesListView: View {
             .navigationTitle("SesNot")
             .navigationDestination(for: UUID.self) { id in NoteDetailView(noteID: id) }
             .toolbar {
+                Button { bridge.showRecordSheet = true } label: { Image(systemName: "mic.fill") }
                 Menu {
                     Picker("Filtre", selection: $filter) {
                         Text("Tümü").tag(NoteTemplate?.none)
                         ForEach(NoteTemplate.allCases) { Text($0.title).tag(NoteTemplate?.some($0)) }
                     }
                 } label: { Image(systemName: "line.3.horizontal.decrease.circle") }
+            }
+            .sheet(isPresented: $bridge.showRecordSheet) { RecordView() }
+            .onChange(of: bridge.pendingStart) { _, t in
+                guard let t else { return }
+                recorder.template = t
+                bridge.pendingStart = nil
+                if !recorder.isRecording { recorder.start() }
+            }
+            .onChange(of: bridge.pendingStop) { _, v in
+                guard v else { return }
+                bridge.pendingStop = false
+                if recorder.isRecording { recorder.stop() }
             }
         }
     }

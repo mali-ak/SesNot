@@ -53,6 +53,8 @@ Kanal protokolü: ilk satır üst veri JSON (`RecordingMetadata`), ardından ham
 | `mobile/Summarizer.kt` | Gemini Nano → yedek özetleyici |
 | `mobile/ProcessingPipeline.kt` | Ayrım → tur başına tanıma → etiketli transkript → özet |
 | `mobile/MainActivity.kt` | Compose liste/detay, konuşmacı renkleri, paylaşım |
+| `mobile/PhoneRecorderService.kt` | Telefondan kayıt; Bluetooth SCO ile saat mikrofonu |
+| `mobile/RecordScreen.kt`, `RecordTileService.kt` | Kayıt ekranı, hızlı ayarlar kutucuğu |
 
 ## Bilinen eksikler
 

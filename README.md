@@ -45,6 +45,18 @@ Varsayılan: toplantı şablonunda açık, alışveriş ve notta kapalı (hız).
 Yedek özetleyici her iki platformda **aynı algoritmayı** uygular, böylece LLM olmayan cihazlarda da
 tutarlı sonuç alınır. Şablon başına kural tabanlı sonradan işleme vardır (bkz. `SummaryTemplates`).
 
+### Telefondan kayıt modu (saat uygulaması olmayanlar için)
+
+Huawei GT serisi gibi üçüncü parti uygulama almayan saatlerde kayıt **telefondan** başlatılır; ses kaynağı
+olarak bağlı Bluetooth arama cihazının (saatin) mikrofonu seçilebilir. Böylece telefon cepte kalır, ses
+bilekten gelir. Kalan akış (transkripsiyon, özet, konuşmacı ayrımı) aynıdır.
+
+| | iOS | Android |
+|---|---|---|
+| Bluetooth mikrofon | `AVAudioSession` `.allowBluetooth` + `.voiceChat`, `setPreferredInput(HFP)` | `AudioManager.setCommunicationDevice(SCO)` + `VOICE_COMMUNICATION` kaynağı |
+| Hızlı tetikleme | Siri / Kısayollar ("SesNot kaydı başlat"), App Intents | Hızlı ayarlar kutucuğu, bildirimden "Durdur" |
+| Sınır | Arama kalitesi ses (16 kHz mono); gelen arama kaydı keser | Aynı; Android 12+ gerekir |
+
 ## Şablonlar
 
 | Şablon | Çıktı |
