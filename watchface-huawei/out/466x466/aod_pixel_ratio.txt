@@ -1,0 +1,1 @@
+AOD non-black pixel ratio: 5.43% (GT series limit: <10% ideal, <20% max)
