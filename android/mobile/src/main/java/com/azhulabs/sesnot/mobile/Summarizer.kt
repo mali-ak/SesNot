@@ -8,7 +8,7 @@ import com.azhulabs.sesnot.shared.Summary
 import com.azhulabs.sesnot.shared.SummaryTemplates
 import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.prompt.Generation
-import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.flow.collect
 
 /**
  * Önce Gemini Nano (ML Kit GenAI Prompt API, AICore) dener; cihaz desteklemiyorsa veya çıktı bozuksa
@@ -26,15 +26,15 @@ class Summarizer(private val context: Context) {
     private suspend fun geminiNano(transcript: String, template: NoteTemplate): Summary? {
         return try {
             val client = Generation.getClient()
-            when (client.checkStatus().await()) {
+            when (client.checkStatus()) {
                 FeatureStatus.AVAILABLE -> {}
-                FeatureStatus.DOWNLOADABLE -> { client.download().await() }   // ilk kullanımda model iner (Wi-Fi)
+                FeatureStatus.DOWNLOADABLE -> client.download().collect { }   // ilk kullanımda model iner (Wi-Fi)
                 else -> return null
             }
             val chunks = chunk(transcript, 6_000)
             var merged: Summary? = null
             for (c in chunks) {
-                val result = client.generateContent(SummaryTemplates.prompt(template, c)).await()
+                val result = client.generateContent(SummaryTemplates.prompt(template, c))
                 val part = SummaryTemplates.parse(result.candidates.firstOrNull()?.text ?: "") ?: continue
                 merged = merged?.let {
                     Summary(

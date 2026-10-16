@@ -17,8 +17,9 @@ enum AudioDecoder {
             throw NSError(domain: "SesNot", code: 21, userInfo: [NSLocalizedDescriptionKey: "Tampon ayrılamadı"])
         }
         var readError: Error?
+        var convertError: NSError?
         var finished = false
-        let status = converter.convert(to: out, error: &readError) { packetCount, outStatus in
+        let status = converter.convert(to: out, error: &convertError) { packetCount, outStatus in
             if finished { outStatus.pointee = .endOfStream; return nil }
             guard let buf = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: packetCount) else {
                 outStatus.pointee = .endOfStream; return nil
@@ -29,6 +30,7 @@ enum AudioDecoder {
             return buf
         }
         if let readError { throw readError }
+        if let convertError { throw convertError }
         guard status != .error, let ch = out.floatChannelData else {
             throw NSError(domain: "SesNot", code: 22, userInfo: [NSLocalizedDescriptionKey: "Ses çözülemedi"])
         }
