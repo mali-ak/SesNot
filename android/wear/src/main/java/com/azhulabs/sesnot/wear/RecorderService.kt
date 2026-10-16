@@ -9,6 +9,7 @@ import android.content.Intent
 import android.media.MediaRecorder
 import android.os.Binder
 import android.os.IBinder
+import androidx.core.app.NotificationCompat
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.azhulabs.sesnot.shared.NoteTemplate
@@ -142,10 +143,11 @@ class RecorderService : Service() {
     private fun buildNotification(): Notification {
         val nm = getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(NotificationChannel(CHANNEL, "Kayıt", NotificationManager.IMPORTANCE_LOW))
-        val builder = Notification.Builder(this, CHANNEL)
+        val builder = NotificationCompat.Builder(this, CHANNEL)
             .setSmallIcon(android.R.drawable.ic_btn_speak_now)
             .setContentTitle("SesNot kaydediyor")
             .setOngoing(true)
+            .setCategory(NotificationCompat.CATEGORY_WORKOUT)
         OngoingActivity.Builder(this, NOTIFICATION_ID, builder)
             .setStaticIcon(android.R.drawable.ic_btn_speak_now)
             .setStatus(Status.Builder().addTemplate("Kayıt sürüyor").build())
