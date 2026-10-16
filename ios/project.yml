@@ -29,13 +29,15 @@ targets:
         # SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) SESNOT_DIARIZATION
 
   SesNotWatch:
-    type: application.watchapp2
+    # watchOS 7+ tek hedefli SwiftUI uygulaması (WatchKit uzantısı yok).
+    type: application
     platform: watchOS
     sources: [WatchApp, Shared]
     info:
       path: WatchApp/Info.plist
       properties:
         CFBundleDisplayName: SesNot
+        WKApplication: true
         WKCompanionAppBundleIdentifier: com.azhulabs.sesnot
         WKRunsIndependentlyOfCompanionApp: true
         NSMicrophoneUsageDescription: Sesli not ve toplantı kaydı almak için.

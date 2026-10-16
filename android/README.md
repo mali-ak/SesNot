@@ -6,7 +6,10 @@
    yoksa `gradle wrapper --gradle-version 8.9` çalıştırın).
 2. İki uygulama modülü vardır: `mobile` (telefon) ve `wear` (saat). **İkisinin `applicationId`'si aynı
    olmalıdır** (`com.azhulabs.sesnot`) ve aynı anahtarla imzalanmalıdır; Data Layer eşleşmesi buna bağlıdır.
-3. Konuşmacı ayrımı modellerini indirip `mobile/src/main/assets/diarization/` altına koyun:
+3. Konuşmacı ayrımı için sherpa-onnx GitHub sürümlerinden Android AAR'ını indirip
+   `mobile/libs/sherpa-onnx.aar` adıyla koyun (Maven'da yayınlanmıyor). Dosya yoksa proje
+   `src/stub` ile derlenir ve tek konuşmacı varsayar.
+4. Modelleri indirip `mobile/src/main/assets/diarization/` altına koyun:
    - `sherpa-onnx-pyannote-segmentation-3-0.onnx` (~6 MB)
    - `3dspeaker_speech_eres2net_base_sv_zh-cn_3dspeaker_16k.onnx` (~27 MB)
 

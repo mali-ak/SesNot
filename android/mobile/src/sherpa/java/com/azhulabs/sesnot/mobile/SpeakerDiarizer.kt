@@ -10,11 +10,9 @@ import com.k2fsa.sherpa.onnx.OfflineSpeakerSegmentationPyannoteModelConfig
 import com.k2fsa.sherpa.onnx.SpeakerEmbeddingExtractorConfig
 import java.io.File
 
-/** Konuşmacı ayrımı sonucu: [startMs, endMs) aralığında `speaker` konuşuyor. */
-data class SpeakerTurn(val speaker: Int, val startMs: Long, val endMs: Long)
-
 /**
  * Cihaz üstü konuşmacı ayrımı (sherpa-onnx: pyannote segmentation-3.0 + 3D-Speaker ERes2Net embedding).
+ * Bu dosya yalnızca `mobile/libs/sherpa-onnx.aar` mevcutken derlenir (bkz. build.gradle.kts).
  * Modeller `assets/diarization/` altında beklenir; yoksa `isAvailable` false döner ve
  * pipeline tek konuşmacı varsayar. Dil bağımsızdır; Türkçe için ek eğitim gerekmez.
  */
@@ -23,7 +21,8 @@ class SpeakerDiarizer(private val context: Context) {
     private val modelDir = File(context.filesDir, "diarization")
     val isAvailable: Boolean get() = SEGMENTATION_MODEL in assetNames() && EMBEDDING_MODEL in assetNames()
 
-    private fun assetNames(): List<String> = runCatching { context.assets.list("diarization")?.toList() }.getOrNull() ?: emptyList()
+    private fun assetNames(): List<String> =
+        runCatching { context.assets.list("diarization")?.toList() }.getOrNull() ?: emptyList()
 
     /** Asset'leri filesDir'e kopyalar (sherpa-onnx dosya yolu ister). */
     private fun ensureModels(): Boolean {
@@ -54,26 +53,15 @@ class SpeakerDiarizer(private val context: Context) {
         )
         val sd = OfflineSpeakerDiarization(config = config)
         return try {
-            sd.process(samples).map { SpeakerTurn(it.speaker, (it.start * 1000).toLong(), (it.end * 1000).toLong()) }
+            sd.process(samples)
+                .map { SpeakerTurn(it.speaker, (it.start * 1000).toLong(), (it.end * 1000).toLong()) }
                 .sortedBy { it.startMs }
-                .let(::mergeAdjacent)
+                .mergeAdjacent()
         } catch (e: Exception) {
             Log.e(TAG, "diarization hatası", e); emptyList()
         } finally {
             sd.release()
         }
-    }
-
-    /** Aynı konuşmacının 1 sn'den kısa aralıklı ardışık turlarını birleştir: daha az, daha uzun tanıma çağrısı. */
-    private fun mergeAdjacent(turns: List<SpeakerTurn>): List<SpeakerTurn> {
-        val out = ArrayList<SpeakerTurn>()
-        for (t in turns) {
-            val last = out.lastOrNull()
-            if (last != null && last.speaker == t.speaker && t.startMs - last.endMs < 1000)
-                out[out.size - 1] = last.copy(endMs = t.endMs)
-            else out += t
-        }
-        return out
     }
 
     companion object {

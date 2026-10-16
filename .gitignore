@@ -17,3 +17,6 @@ android/*.iml
 android/mobile/src/main/assets/diarization/*.onnx
 *.keystore
 *.jks
+
+# sherpa-onnx AAR (GitHub sürümlerinden indirilir)
+android/mobile/libs/*.aar
